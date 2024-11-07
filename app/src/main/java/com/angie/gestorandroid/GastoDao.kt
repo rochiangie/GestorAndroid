@@ -3,12 +3,11 @@ package com.angie.gestorandroid
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-
 @Dao
 interface GastoDao {
 
     @Insert
-    suspend fun insertarGasto(gasto: Gasto)
+    suspend fun agregarGasto(gasto: Gasto)
 
     @Query("SELECT * FROM gasto")
     suspend fun obtenerTodosLosGastos(): List<Gasto>

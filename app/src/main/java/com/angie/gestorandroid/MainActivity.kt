@@ -12,11 +12,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.room.Room
-import com.angie.gestorandroid.AppDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : ComponentActivity() {
     private lateinit var db: AppDatabase
@@ -35,6 +36,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppDiariaScreen(db: AppDatabase) {
+    var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
     var monto by remember { mutableStateOf("") }
     var categoria by remember { mutableStateOf("") }
@@ -46,6 +48,13 @@ fun AppDiariaScreen(db: AppDatabase) {
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
+        TextField(
+            value = nombre,
+            onValueChange = { nombre = it },
+            label = { Text("Nombre del Gasto") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
         TextField(
             value = descripcion,
             onValueChange = { descripcion = it },
@@ -72,7 +81,7 @@ fun AppDiariaScreen(db: AppDatabase) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Row {
-            Button(onClick = { registrarGasto(descripcion, monto, categoria, fecha, db) { msg -> message = msg } }) {
+            Button(onClick = { registrarGasto(nombre, descripcion, monto, categoria, fecha, db, { msg -> message = msg }) }) {
                 Text("Registrar Gasto")
             }
         }
@@ -81,21 +90,27 @@ fun AppDiariaScreen(db: AppDatabase) {
     }
 }
 
-fun registrarGasto(descripcion: String, monto: String, categoria: String, fecha: String, db: AppDatabase, onResult: (String) -> Unit) {
-    if (descripcion.isEmpty() || monto.isEmpty() || categoria.isEmpty() || fecha.isEmpty()) {
+fun registrarGasto(nombre: String, descripcion: String, monto: String, categoria: String, fecha: String, db: AppDatabase, onResult: (String) -> Unit) {
+    if (nombre.isEmpty() || descripcion.isEmpty() || monto.isEmpty() || categoria.isEmpty() || fecha.isEmpty()) {
         onResult("Por favor, complete todos los campos.")
         return
     }
+
     val montoDouble = monto.toDoubleOrNull()
     if (montoDouble == null || montoDouble <= 0) {
         onResult("El monto debe ser un valor numérico positivo.")
         return
     }
-    val gasto = Gasto(descripcion = descripcion, monto = montoDouble, categoria = categoria, fecha = fecha)
+
+    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val date = sdf.parse(fecha)
+    val fechaLong = date?.time ?: 0L
+
+    val gasto = Gasto(nombre = nombre, descripcion = descripcion, monto = montoDouble, categoria = categoria, fecha = fechaLong)
 
     CoroutineScope(Dispatchers.IO).launch {
         try {
-            db.gastoDao().registrarGasto(gasto)
+            db.gastoDao().agregarGasto(gasto)
             withContext(Dispatchers.Main) {
                 onResult("Gasto registrado con éxito")
             }
