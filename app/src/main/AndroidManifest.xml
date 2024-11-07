@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.angie.gestorandroid">
+
+    <!-- Permisos necesarios para la aplicación -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Otros permisos que puedas necesitar, como acceso a la cámara o almacenamiento, pueden ir aquí -->
+
+    <!-- Declaración de los componentes de la aplicación -->
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.GestorAndroid"
+        android:usesCleartextTraffic="true">
+
+        <activity
+            android:name="com.angie.gestorandroid.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.GestorAndroid"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize"
+            android:launchMode="singleTask"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
+
+
+</application>
+
+    </manifest>

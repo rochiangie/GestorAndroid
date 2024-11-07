@@ -1,0 +1,85 @@
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-kapt") // Asegúrate de que esta línea esté presente
+}
+
+android {
+    namespace = "com.angie.gestorandroid"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "com.angie.gestorandroid"
+        minSdk = 33
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true // Correcto: habilitar la minificación
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false // Deshabilitado para debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+}
+
+dependencies {
+    // Dependencias de Room
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")          // Para procesar anotaciones de Room
+
+    // Dependencias de Jetpack Compose y otras librerías
+    implementation(libs.androidx.core.ktx)                 // Kotlin Extensions para Android Core
+    implementation(libs.androidx.lifecycle.runtime.ktx)    // KTX para Lifecycle
+    implementation(libs.androidx.activity.compose)         // Activity Compose Integration
+    implementation(platform(libs.androidx.compose.bom))    // BOM (Bill of Materials) para gestionar versiones de Compose
+    implementation(libs.androidx.ui)                       // Dependencias de UI de Jetpack Compose
+    implementation(libs.androidx.ui.graphics)              // Dependencias gráficas de Jetpack Compose
+    implementation(libs.androidx.ui.tooling.preview)       // Herramientas de vista previa para Compose
+    implementation(libs.androidx.material3)                // Material 3 para Jetpack Compose
+
+    // Dependencias para pruebas
+    testImplementation(libs.junit)                         // JUnit para pruebas unitarias
+    androidTestImplementation(libs.androidx.junit)        // JUnit para pruebas Android
+    androidTestImplementation(libs.androidx.espresso.core) // Espresso para pruebas UI de Android
+    androidTestImplementation(platform(libs.androidx.compose.bom))  // BOM para pruebas en Compose
+    androidTestImplementation(libs.androidx.ui.test.junit4) // Pruebas unitarias para UI con Compose
+
+    // Dependencias de depuración y pruebas en Compose
+    debugImplementation(libs.androidx.ui.tooling)         // Herramientas de depuración de Compose
+    debugImplementation(libs.androidx.ui.test.manifest)   // Manifesto para pruebas de Compose en debug
+}
+
